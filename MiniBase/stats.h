@@ -11,6 +11,7 @@ public:
 
 	static void ResetStats();
 
+	bool m_enabled;
 	StatsType m_stats_type;
 	float m_show_time;
 	float m_pre;

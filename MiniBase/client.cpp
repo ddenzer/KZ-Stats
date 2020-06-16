@@ -130,8 +130,8 @@ void HUD_Frame( double time )
 		offset.ConsoleColorInitalize();
 		offset.GetGameInfo( &BuildInfo );
 
-		HookUserMessages();
-		HookEngineMessages();
+		//HookUserMessages();
+		//HookEngineMessages();
 
 		InitHack();
 
@@ -142,9 +142,14 @@ void HUD_Frame( double time )
 	g_Client.HUD_Frame( time );
 }
 
-void HUD_Redraw(float _time , int intermission)
+void HUD_Redraw( float time , int intermission )
 {
-	g_Client.HUD_Redraw(_time, intermission);
+	g_Client.HUD_Redraw(time, intermission);
+
+	if (!g_Stats->m_enabled)
+	{
+		return;
+	}
 
 	if (g_Engine.Sys_FloatTime() > g_Stats->m_show_time || !g_Stats->m_show_time || g_Stats->m_stats_type == Stats::StatsType::StatsNone)
 	{
@@ -196,6 +201,11 @@ void CL_CreateMove( float frametime , usercmd_s *cmd , int active )
 {
 	g_Client.CL_CreateMove(frametime, cmd, active);
 
+	if (!g_Stats->m_enabled)
+	{
+		return;
+	}
+
 	auto buttons = cmd->buttons;
 	static int old_buttons;
 
@@ -223,7 +233,6 @@ void CL_CreateMove( float frametime , usercmd_s *cmd , int active )
 				}
 
 				g_BhopStats->m_bhops++;
-				//g_BhopStats->m_pre = speed;
 				g_BhopStats->m_fog = fog;
 
 				g_BhopStats->m_bhop_type = Bhop::GetType(g_BhopStats->m_fog, buttons, old_buttons, speed, old_speed, max_pre_strafe);
@@ -269,10 +278,22 @@ void CL_CreateMove( float frametime , usercmd_s *cmd , int active )
 	old_buttons = buttons;
 }
 
+int HUD_Key_Event( int down , int keynum , const char *pszCurrentBinding )
+{
+	if (keynum == K_INS)
+	{
+		g_Stats->m_enabled = !g_Stats->m_enabled;
+		ConsolePrintColor(255, 0, 0, "[KZ Stats] Stats %s\n", g_Stats->m_enabled ? "enabled" : "disabled");
+	}
+
+	return g_Client.HUD_Key_Event(down, keynum, pszCurrentBinding);
+}
+
 void HookFunction()
 {
 	g_pClient->HUD_Frame = HUD_Frame;
 	g_pClient->HUD_Redraw = HUD_Redraw;
 	g_pClient->CL_CreateMove = CL_CreateMove;
+	g_pClient->HUD_Key_Event = HUD_Key_Event;
 	//g_pClient->HUD_PlayerMove = HUD_PlayerMove;
 }
