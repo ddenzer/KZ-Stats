@@ -45,7 +45,7 @@ using namespace std;
 #include "drawing.h"
 
 #define BUILD_DATE __DATE__
-#define VERSION "0.0.1"
+#define VERSION "0.0.2"
 
 void add_log( const char *fmt , ... );
 
