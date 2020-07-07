@@ -1,13 +1,13 @@
 #include "bhop.h"
 
-Bhop *g_BhopStats;
+Bhop g_BhopStats;
 
 void Bhop::ResetStats()
 {
-	g_BhopStats->m_bhops = 0;
-	g_BhopStats->m_perfect_bhops = 0;
-	g_BhopStats->m_fog = -1;
-	g_BhopStats->m_bhop_type = -1;
+	g_BhopStats.m_bhops = 0;
+	g_BhopStats.m_perfect_bhops = 0;
+	g_BhopStats.m_fog = -1;
+	g_BhopStats.m_bhop_type = -1;
 }
 
 // FAME
@@ -34,8 +34,12 @@ int Bhop::GetType(int fog, int buttons, int old_buttons, float speed, float old_
 
 char* Bhop::GetPrefixType()
 {
-    switch (g_BhopStats->m_bhop_type)
+    switch (g_BhopStats.m_bhop_type)
     {
+    case 0:
+    {
+        return "NaN";
+    }
     case 1:
     {
         return "P";

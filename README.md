@@ -4,7 +4,7 @@ Credits: FAME
 - HUD/Console info
 - ON/OFF function
 - FOG
-- Bhop Type
+- Bhop/Gstrafe Type
   - [P] - perfect
   - [G] - good
   - [B] - bad

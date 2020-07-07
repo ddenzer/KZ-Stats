@@ -89,29 +89,25 @@
   <ItemGroup>
     <ClCompile Include="bhop.cpp" />
     <ClCompile Include="client.cpp" />
-    <ClCompile Include="drawing.cpp" />
-    <ClCompile Include="enginemsg.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="gstrafe.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="offset.cpp" />
+    <ClCompile Include="pmove.cpp" />
     <ClCompile Include="stats.cpp" />
-    <ClCompile Include="usermsg.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="ValveSDK\misc\parsemsg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bhop.h" />
     <ClInclude Include="client.h" />
-    <ClInclude Include="drawing.h" />
-    <ClInclude Include="enginemsg.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="gstrafe.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="offset.h" />
+    <ClInclude Include="pmove.h" />
     <ClInclude Include="stats.h" />
     <ClInclude Include="struct.h" />
-    <ClInclude Include="usermsg.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="ValveSDK\misc\parsemsg.h" />
   </ItemGroup>

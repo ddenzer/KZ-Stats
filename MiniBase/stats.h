@@ -17,4 +17,4 @@ public:
 	float m_pre;
 };
 
-extern Stats* g_Stats;
+extern Stats g_Stats;

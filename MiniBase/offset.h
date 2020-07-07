@@ -20,16 +20,14 @@ public:
 
 	void Error( char* Msg );
 
-	PVOID FindPlayerMove();
+	//PVOID FindPlayerMove();
 	DWORD FindClientTable();
 	DWORD FindEngineTable();
 	DWORD FindStudioTable();
 	DWORD FindUserMsgBase();
 	DWORD FindGameConsole();
-	DWORD FindSVCMessages();
 
 	void ConsoleColorInitalize();
-	void GetGameInfo( pGameInfo_s GameInfo );
 
 	void CopyClient();
 	void CopyEngine();

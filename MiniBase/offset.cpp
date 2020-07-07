@@ -58,7 +58,7 @@ void cOffset::Error( char* Msg )
 	ExitProcess( 0 );
 }
 
-PVOID cOffset::FindPlayerMove()
+/*PVOID cOffset::FindPlayerMove()
 {
 	DWORD Address = FindPattern("ScreenFade", HwBase, HwEnd, 0);
 
@@ -73,7 +73,7 @@ PVOID cOffset::FindPlayerMove()
 		Error("PlayerMove: not found.");
 
 	return Ptr;
-}
+}*/
 
 DWORD cOffset::FindClientTable()
 {
@@ -190,73 +190,6 @@ DWORD cOffset::FindGameConsole()
 	return GameConsole;
 }
 
-DWORD cOffset::FindSVCMessages()
-{
-	DWORD EngineMsgBase = FindPattern( OFF_SVC_MSG_PATTERN , OFF_SVC_MSG_MASK , HwBase , HwEnd , 1 );
-
-	PEngineMsg pEngineMsgBase = (PEngineMsg)( *(PDWORD)EngineMsgBase - sizeof( DWORD ) );
-
-	if ( pEngineMsgBase )
-	{
-		MSG_ReadByte = (HL_MSG_ReadByte)offset.Absolute( ( (DWORD)pEngineMsgBase[SVC_CDTRACK].pfn ) + 1 );
-		MSG_ReadShort = (HL_MSG_ReadShort)offset.Absolute( ( (DWORD)pEngineMsgBase[SVC_STOPSOUND].pfn ) + 1 );
-		MSG_ReadLong = (HL_MSG_ReadLong)offset.Absolute( ( (DWORD)pEngineMsgBase[SVC_VERSION].pfn ) + 1 );
-		MSG_ReadFloat = (HL_MSG_ReadFloat)offset.Absolute( ( (DWORD)pEngineMsgBase[SVC_TIMESCALE].pfn ) + 1 );
-		MSG_ReadString = (HL_MSG_ReadString)offset.Absolute( ( (DWORD)pEngineMsgBase[SVC_PRINT].pfn ) + 1 );
-
-		DWORD CallMSG_ReadCoord = offset.Absolute( (DWORD)( pEngineMsgBase[SVC_PARTICLE].pfn ) + 1 );
-
-		if ( *(PBYTE)( CallMSG_ReadCoord + 0x13 ) == 0xE8 )	// STEAM
-			MSG_ReadCoord = (HL_MSG_ReadCoord)offset.Absolute( ( CallMSG_ReadCoord + 0x14 ) );
-		else if ( *(PBYTE)( CallMSG_ReadCoord + 0x15 ) == 0xE8 )	// OLD PATCH (SOFTWARE)
-			MSG_ReadCoord = (HL_MSG_ReadCoord)offset.Absolute( ( CallMSG_ReadCoord + 0x16 ) );
-		else if ( *(PBYTE)( CallMSG_ReadCoord + 0x0E ) == 0xE8 )	// OLD PATCH
-			MSG_ReadCoord = (HL_MSG_ReadCoord)offset.Absolute( ( CallMSG_ReadCoord + 0x0F ) );
-		else if ( *(PBYTE)( CallMSG_ReadCoord + 0x0B ) == 0xE8 )	// OLD OLD PATCH
-			MSG_ReadCoord = (HL_MSG_ReadCoord)offset.Absolute( ( CallMSG_ReadCoord + 0x0C ) );
-		else
-			offset.Error( OFF_MSG_READ_CORD );
-
-		MSG_ReadCount = *(PINT*)( (INT)(MSG_ReadByte)+1 );
-		MSG_CurrentSize = *(PINT*)( (INT)(MSG_ReadByte)+7 );
-		MSG_BadRead = *(PINT*)( (INT)(MSG_ReadByte)+20 );
-
-		DWORD SVC_SoundBase = (DWORD)pEngineMsgBase[SVC_SOUND].pfn;
-
-		if ( *(PBYTE)( SVC_SoundBase + 0x0E ) == 0xE8 )
-		{
-			MSG_Buffer = (sizebuf_t *)( *(PDWORD)( SVC_SoundBase + 0x0A ) );
-			MSG_StartBitReading = (HL_MSG_StartBitReading)offset.Absolute( SVC_SoundBase + 0x0F );
-			MSG_ReadBits = (HL_MSG_ReadBits)offset.Absolute( SVC_SoundBase + 0x16 );
-		}
-		else if ( *(PBYTE)( SVC_SoundBase + 0x0C ) == 0xE8 )
-		{
-			MSG_Buffer = (sizebuf_t *)( *(PDWORD)( SVC_SoundBase + 0x08 ) );
-			MSG_StartBitReading = (HL_MSG_StartBitReading)offset.Absolute( SVC_SoundBase + 0x0D );
-			MSG_ReadBits = (HL_MSG_ReadBits)offset.Absolute( SVC_SoundBase + 0x14 );
-		}
-		else
-			offset.Error( OFF_MSG_STR_READING );
-
-		if ( *(PBYTE)( SVC_SoundBase + 0xD6 ) == 0xE8 )
-		{
-			MSG_EndBitReading = (HL_MSG_EndBitReading)offset.Absolute( SVC_SoundBase + 0xD7 );
-			MSG_ReadBitVec3Coord = (HL_MSG_ReadBitVec3Coord)offset.Absolute( SVC_SoundBase + 0xAF );
-		}
-		else if ( *(PBYTE)( SVC_SoundBase + 0xE2 ) == 0xE8 )
-		{
-			MSG_EndBitReading = (HL_MSG_EndBitReading)offset.Absolute( SVC_SoundBase + 0xE3 );
-			MSG_ReadBitVec3Coord = (HL_MSG_ReadBitVec3Coord)offset.Absolute( SVC_SoundBase + 0xBE );
-		}
-		else
-			offset.Error( OFF_MSG_END_READING );
-	}
-	else
-		offset.Error( OFF_ENGINE_MSG_BASE );
-
-	return (DWORD)pEngineMsgBase;
-}
-
 void cOffset::ConsoleColorInitalize()
 {
 	DWORD GameConsole = FindGameConsole();
@@ -272,25 +205,6 @@ void cOffset::ConsoleColorInitalize()
 			Console_TextColor = PColor24( Panel + GameConsole + 288 + ( sizeof( DWORD ) * 2 ) );
 		}
 	}
-}
-
-void cOffset::GetGameInfo( pGameInfo_s GameInfo )
-{
-	typedef int( *function )( );
-	pcmd_t cmd = CommandByName( "version" );
-	DWORD Address = (DWORD)cmd->function;
-
-	GameInfo->GameName = *(PCHAR*)( UINT( Address ) + 1 );
-	GameInfo->GameVersion = *(PCHAR*)( UINT( Address ) + 6 );
-	GameInfo->Protocol = *(PBYTE)( UINT( Address ) + 11 );
-
-	Address = Absolute( UINT( Address ) + 23 );
-
-	if ( FarProc( Address , HwBase , HwEnd ) )
-		Error( OFF_ERR_GAMEINFO );
-	
-	function GetBuild = (function)Address;
-	GameInfo->Build = GetBuild();
 }
 
 void cOffset::CopyClient()

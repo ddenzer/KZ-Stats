@@ -40,13 +40,6 @@
 
 #define OFF_ERR_GAMEINFO	"Couldn't find GameInfo pointer."
 
-PUserMsg UserMsgByName( char* szMsgName );
-PEngineMsg EngineMsgByName( char* szMsgName );
-pcmd_t CommandByName( char* szName );
-
-pfnUserMsgHook HookUserMsg( char *szMsgName , pfnUserMsgHook pfn );
-pfnEngineMessage HookEngineMsg( char *szMsgName , pfnEngineMessage pfn );
-
 char* native_strcpy( char *dest , const char *src );
 char* native_strcat( char *dest , const char *src );
 

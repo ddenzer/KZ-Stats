@@ -4,7 +4,6 @@
 #include "bhop.h"
 #include "gstrafe.h"
 
-playermove_t  *g_pMove = nullptr;
 cl_clientfunc_t *g_pClient = nullptr;
 cl_enginefunc_t *g_pEngine = nullptr;
 engine_studio_api_t *g_pStudio = nullptr;
@@ -13,29 +12,13 @@ cl_clientfunc_t g_Client;
 cl_enginefunc_t g_Engine;
 engine_studio_api_t g_Studio;
 
-PUserMsg pUserMsgBase;
-PEngineMsg pEngineMsgBase;
 PColor24 Console_TextColor;
 
 SCREENINFO g_Screen;
 
 BYTE bPreType = 0;
 
-ofstream logfile;
-char* BaseDir;
-
 DWORD WINAPI CheatEntry( LPVOID lpThreadParameter );
-
-void add_log( const char *fmt , ... )
-{
-	if ( !fmt )	return;
-	va_list va_alist;
-	char logbuf[256] = { 0 };
-	va_start( va_alist , fmt );
-	vsnprintf( logbuf + native_strlen( logbuf ) , sizeof( logbuf ) - native_strlen( logbuf ) , fmt , va_alist );
-	va_end( va_alist );
-	logfile << logbuf << endl;
-}
 
 DWORD WINAPI ProcessReload( LPVOID lpThreadParameter )
 {
@@ -69,10 +52,6 @@ DWORD WINAPI CheatEntry( LPVOID lpThreadParameter )
 		CloseHandle( hProcessReloadThread );
 	}
 
-	g_Stats = new Stats;
-	g_BhopStats = new Bhop;
-	g_GstrafeStats = new Gstrafe;
-	
 	BYTE counter_find = 0;
 
 start_hook:
@@ -117,25 +96,15 @@ start_hook:
 
 						if ( (DWORD)g_Studio.StudioSetupSkin )
 						{
-							PVOID PlayerMove = offset.FindPlayerMove();
-
-							if (PlayerMove)
+							while (!FirstFrame)
 							{
-								g_pMove = (playermove_t*)PlayerMove;
-								while (!FirstFrame)
-								{
-									HookFunction();
-									Sleep(100);
-								}
-
-								bPreType = offset.HLType;
-
-								hProcessReloadThread = CreateThread(0, 0, ProcessReload, 0, 0, 0);
+								HookFunction();
+								Sleep(100);
 							}
-							else
-							{
-								goto start_hook;
-							}
+
+							bPreType = offset.HLType;
+
+							hProcessReloadThread = CreateThread(0, 0, ProcessReload, 0, 0, 0);
 						}
 						else
 						{
@@ -184,34 +153,8 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL , DWORD fdwReason , LPVOID lpReserved )
 
 		DisableThreadLibraryCalls(hinstDLL);
 
-		/*BaseDir = (char*)HeapAlloc( GetProcessHeap() , HEAP_ZERO_MEMORY , MAX_PATH );
-		char* LogFile = new char[256];
-
-		GetModuleFileNameA( hinstDLL , BaseDir , MAX_PATH );
-
-		char* pos = BaseDir + native_strlen( BaseDir );
-		while ( pos >= BaseDir && *pos != '\\' ) --pos; pos[1] = 0;
-
-		lstrcpyA( LogFile , BaseDir );
-		lstrcatA( LogFile , "\\log_server.txt" );
-
-		remove( LogFile );
-		logfile.open( LogFile , ios::app );*/
-
 		CreateThread(0, 0, CheatEntry, 0, 0, 0);
 
-		return TRUE;
-	}
-	case DLL_PROCESS_DETACH:
-	{
-		delete g_Stats;
-		g_Stats = nullptr;
-
-		delete g_BhopStats;
-		g_BhopStats = nullptr;
-		
-		delete g_GstrafeStats;
-		g_GstrafeStats = nullptr;
 		return TRUE;
 	}
 	}

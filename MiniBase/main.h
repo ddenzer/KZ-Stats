@@ -32,24 +32,15 @@ using namespace std;
 #include "ValveSDK/common/engine_launcher_api.h"
 #include "ValveSDK/common/entity_types.h"
 
-#include "ValveSDK/pm_shared/pm_defs.h"
-#include "ValveSDK/pm_shared/pm_movevars.h"
-
 #include "struct.h"
 #include "offset.h"
 #include "client.h"
 #include "utils.h"
-#include "usermsg.h"
-#include "enginemsg.h"
 #include "font.h"
-#include "drawing.h"
 
 #define BUILD_DATE __DATE__
-#define VERSION "0.0.2"
+#define VERSION "0.0.3"
 
-void add_log( const char *fmt , ... );
-
-extern playermove_t *g_pMove;
 extern cl_clientfunc_t *g_pClient;
 extern cl_enginefunc_t *g_pEngine;
 extern engine_studio_api_t *g_pStudio;
@@ -58,10 +49,6 @@ extern cl_clientfunc_t g_Client;
 extern cl_enginefunc_t g_Engine;
 extern engine_studio_api_t g_Studio;
 
-extern PUserMsg pUserMsgBase;
-extern PEngineMsg pEngineMsgBase;
 extern PColor24 Console_TextColor;
 
 extern SCREENINFO g_Screen;
-
-extern char* BaseDir;

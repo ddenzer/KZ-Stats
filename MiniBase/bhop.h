@@ -15,4 +15,4 @@ public:
 	int m_bhop_type;
 };
 
-extern Bhop *g_BhopStats;
+extern Bhop g_BhopStats;
